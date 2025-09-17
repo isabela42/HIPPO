@@ -1,0 +1,11 @@
+---
+runtime: shiny
+output:
+  html_document:
+    theme:
+      bslib: true
+---
+
+```{r}
+bslib::bs_themer()
+```

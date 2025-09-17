@@ -1,0 +1,14 @@
+navbar:
+  title: HiChIP analysis
+  left:
+  - text: Description
+    href: description.html
+  - text: H3K27
+    menu:
+    - text: H3K27ac
+      href: H3K27ac.html
+    - text: H3K27me
+      href: H3K27me.html
+output:
+  html_document:
+    theme: flatly
