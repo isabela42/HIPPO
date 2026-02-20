@@ -5,7 +5,7 @@ usage(){
 echo "
 Written by Isabela Almeida
 Created on Jul 30, 2024
-Last modified on September 16, 2025
+Last modified on Feb 20, 2026
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 101 of HIPPO
@@ -130,7 +130,7 @@ logfile=logfile_ipda_hippo_step101-to-pbs_${thislogdate}.txt
 module_pgltools=pgltools/20180905
 
 # Python 2.7.10
-module_python=python/2.7.10
+module_python=python/2.7.13
 
 #................................................
 #  Print Execution info to user
