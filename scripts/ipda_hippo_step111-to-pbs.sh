@@ -315,7 +315,7 @@ cut -f1 ${input} | sort | uniq | while read stem; do grep "${stem}" ${input} | c
 cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 
 cut -f1 ${input} | sort | uniq | while read stem; do echo 'echo "## Write counts to file at" ; date ; echo' >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo -e "sample\tref\talt\ttotal" >> ${outpath_hippo111_samtools}/${stem}.counts; grep "${stem}" ${input} | cut -f9 | sort | uniq | while read window; do echo "ref=\`cut -f5 ${outpath_hippo111_samtools}/${stem}.${window}.mpileup | awk '{print gsub(/[.,]/, \"\")}'\`; alt=\`cut -f5 ${outpath_hippo111_samtools}/${stem}.${window}.mpileup | awk '{print gsub(/[ACGTNacgtn]/, \"\")}'\`; total=\$((ref + alt)) echo -e \"${stem}_${window}\t\${ref}\t\${alt}\t\${total}\" >> ${outpath_hippo111_samtools}/${stem}.counts" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done; done
+cut -f1 ${input} | sort | uniq | while read stem; do echo -e "sample\tref\talt\ttotal" >> ${outpath_hippo111_samtools}/${stem}.counts; grep "${stem}" ${input} | cut -f9 | sort | uniq | while read window; do echo "ref=\`cut -f5 ${outpath_hippo111_samtools}/${stem}.${window}.mpileup | awk '{print gsub(/[.,]/, \"\")}'\`; alt=\`cut -f5 ${outpath_hippo111_samtools}/${stem}.${window}.mpileup | awk '{print gsub(/[ACGTNacgtn]/, \"\")}'\`; total=\$((ref + alt)); echo -e \"${stem}_${window}\t\${ref}\t\${alt}\t\${total}\" >> ${outpath_hippo111_samtools}/${stem}.counts" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done; done
 
 #................................................
 #  Submit PBS jobs
