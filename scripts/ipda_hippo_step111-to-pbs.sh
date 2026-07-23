@@ -322,7 +322,7 @@ cut -f1 ${input} | sort | uniq | while read stem; do echo -e "sample\tref\talt\t
 #................................................
 
 ## Submit PBS jobs 
-ls ${pbs_stem}_*${thislogdate}.pbs | while read pbs; do echo ; echo "#................................................" ; echo "# This is PBS: ${pbs}" ;  echo "#" ; echo "# main command line(s): $(tail -n20 ${pbs} | head -n1)" ; echo "#                       $(tail -n22 ${pbs} | head -n1)"; echo "#                       $(tail -n21 ${pbs} | head -n1)"; echo "#                       $(tail -n18 ${pbs} | head -n1)"; echo "#                       $(tail -n15 ${pbs} | head -n1)"; echo "#                       $(tail -n12 ${pbs} | head -n1)"; echo "#                       $(tail -n10 ${pbs} | head -n1)"; echo "#                       $(tail -n7 ${pbs} | head -n1)"; echo "#                       $(tail -n4 ${pbs} | head -n1)"; echo "#                       $(tail -n1 ${pbs})"; echo "#" ; echo "# now submitting PBS" ; echo "qsub ${pbs}" ; qsub ${pbs} ; echo "#................................................" ; done
+ls ${pbs_stem}_*${thislogdate}.pbs | while read pbs; do echo ; echo "#................................................" ; echo "# This is PBS: ${pbs}" ;  echo "#" ; echo "# now submitting PBS" ; echo "qsub ${pbs}" ; qsub ${pbs} ; echo "#................................................" ; done
 
 date ## Status of all user jobs (including HIPPO step 111 jobs) at
 qstat -u "$user"
