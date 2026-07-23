@@ -24,8 +24,8 @@ Resources used for pipeline in-house: -m 1 -c 1 -w "01:00:00"
                             sample-stem
 
                             Col2:
-                            /path/from/working/dir/to/input.bam
-                            Note: if multiple input.bam files, then space separate these,
+                            /path/from/working/dir/to/bowtie_results/bwt2/data/input.bwt2pairs.bam
+                            Note: from HIPPO 050 step if multiple input.bam files, then space separate these,
                             e.g. /path/from/working/dir/to/input1.bam /path/from/working/dir/to/input2.bam
                             and flag merge yes on col3
 
@@ -47,7 +47,7 @@ Resources used for pipeline in-house: -m 1 -c 1 -w "01:00:00"
                             Col6:
                             INT
                             start coordinate of lower interaction window,
-                            eg. 30890000 for window 17:30890001-30895000
+                            eg. 30890001 for window 17:30890001-30895000
 
                             Col7:
                             INT
@@ -286,8 +286,8 @@ cut -f1 ${input} | sort | uniq | while read stem; do echo "#  Run step" >> ${pbs
 cut -f1 ${input} | sort | uniq | while read stem; do echo "#................................................" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo 'echo "## Merge input BAM files at" ; date ; echo' >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do flag_merge=`grep -F "${stem}" ${input} | cut -f3 | sort | uniq`; if [[ $flag_merge = "yes" ]]; then mergebam=`grep -F "${stem}" ${input} | cut -f2 | head -n1`; echo "samtools cat -o ${outpath_hippo111_samtools}/${stem}-input.merged.bam ${mergebam}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; elif [[ $flag_merge = "no" ]]; then echo "#Flag to do not merge file" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; else echo "Unknown flag provided. Please provide either yes or no and try again" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; fi; done
-cut -f1 ${input} | sort | uniq | while read stem; do flag_merge=`grep -F "${stem}" ${input} | cut -f3 | sort | uniq`; if [[ $flag_merge = "yes" ]]; then inputbam="${outpath_hippo111_samtools}/${stem}-input.merged.bam" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; elif [[ $flag_merge = "no" ]]; then nonmergebam=`grep -F "${stem}" ${input} | cut -f2`; inputbam="${nonmergebam}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; else echo "Unknown flag provided. Please provide either yes or no and try again" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; fi; done
+cut -f1 ${input} | sort | uniq | while read stem; do flag_merge=`grep -F "${stem}" ${input} | cut -f3 | sort | uniq`; if [[ $flag_merge = "yes" ]]; then mergebam=`grep -F "${stem}" ${input} | cut -f2 | sort | uniq`; echo "samtools cat -o ${outpath_hippo111_samtools}/${stem}.merged.bam ${mergebam}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; elif [[ $flag_merge = "no" ]]; then echo "#Flag to do not merge file" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; else echo "Unknown flag provided. Please provide either yes or no and try again" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; fi; done
+cut -f1 ${input} | sort | uniq | while read stem; do flag_merge=`grep -F "${stem}" ${input} | cut -f3 | sort | uniq`; if [[ $flag_merge = "yes" ]]; then inputbam="${outpath_hippo111_samtools}/${stem}.merged.bam" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; elif [[ $flag_merge = "no" ]]; then nonmergebam=`grep -F "${stem}" ${input} | cut -f2`; inputbam="${nonmergebam}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; else echo "Unknown flag provided. Please provide either yes or no and try again" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; fi; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 
 cut -f1 ${input} | sort | uniq | while read stem; do echo 'echo "## Sort input BAM files at" ; date ; echo' >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
