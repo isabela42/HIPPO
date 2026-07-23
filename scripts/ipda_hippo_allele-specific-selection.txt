@@ -1,0 +1,75 @@
+Written by Isabela Almeida
+Created on Jul 09, 2026
+Last modified on Jul 23, 2026
+Description: Guide to quantify allele-specific looping.
+
+#................................................
+#  Genome-wide allele-specific analyses
+#................................................
+
+- Ideally use WASP before HiC-Pro in the HIPPO pipeline to remove mapping bias.
+- Requires phased SNP data step. Ideally use long-read data, or whole genome sequencing. For short-read RNAseq data, this is a quick workflow based on Google AI Mode (please be careful when implementing):
+
+    - alignment to genome: align RNAseq reads to genome (e.g. STAR) and HiChIP data to genome (can use hic-pro's bowtie_results/bwt2/ files
+    ```
+    # Align and sort RNA-seq data
+    STAR --runThreadN 8 --genomeDir /path/to/hg38_index --readFilesIn rna_R1.fastq rna_R2.fastq --outSAMtype BAM SortedByCoordinate --outFileNamePrefix rna_short_
+
+    # Add read groups to the RNA BAM
+    samtools addreplacerg -r "ID:RNA\tSM:IOSE7576\tPL:Illumina" -o rna_rg.bam rna_short_Aligned.sortedByCoord.out.bam
+
+    # Align HiChIP data (using bwa-mem paired-end)
+    bwa mem -t 8 /path/to/hg38.fa hichip_R1.fastq hichip_R2.fastq | samtools sort -@ 4 -o hichip_sorted.bam -
+    samtools addreplacerg -r "ID:HiChIP\tSM:IOSE7576\tPL:Illumina" -o hichip_rg.bam hichip_sorted.bam
+    ```
+
+    - variant calling: call the initial SNPs using variant caller, e.g. GATK HaplotypeCaller
+    ```
+    # Split reads containing Ns in their CIGAR string
+    gatk SplitNCigarReads -R hg38.fa -I rna_short_Aligned.sortedByCoord.out.bam -O rna_split.bam
+
+    # Call variants and filter for heterozygous SNPs
+    gatk HaplotypeCaller -R hg38.fa -I rna_split.bam -O raw_variants.vcf
+    gatk SelectVariants -R hg38.fa -V raw_variants.vcf -select "vc.isHet()" -O het_snps.vcf
+    ```
+
+    - haplotype phasing: for short-read data, use HapCUT2 to phase the haplotype blocks
+    ```
+    # Extract standard short-read fragments from RNA-seq
+    extractHAIRS --bam rna_split.bam --VCF het_snps.vcf --output rna_fragments.txt
+
+    # Extract chromatin-conformation fragments from HiChIP (Crucial: use the --hic 1 flag)
+    extractHAIRS --hic 1 --bam hichip_rg.bam --VCF het_snps.vcf --output hichip_fragments.txt
+
+    # Concatenate both fragment files into a single master matrix
+    cat rna_fragments.txt hichip_fragments.txt > combined_fragments.txt
+
+    # Run HapCUT2 to find the mathematically optimal haplotype matrix
+    hapcut2 --fragments combined_fragments.txt --VCF het_snps.vcf --output IOSE7576_short_hic_haplotypes.txt
+
+    # Using the utility script provided in the HapCUT2 repository
+    python /path/to/hapcut2/utilities/fqaVCF.py --vcf het_snps.vcf --haplos IOSE7576_short_hic_haplotypes.txt --output IOSE7576_phased_final.vcf
+    ```
+
+- You can then use a tool such as SNPsplit to get allele-assigned valid pairs; select only pairs supportted by HiC-DC+ significant loops; count haplotype 1 vs haplotype 2 contacts and move to binomial statistical testing (see some notes of these at "Statiscal testing" on this file). See the links below for info on SNPsplit:
+    - https://pubmed.ncbi.nlm.nih.gov/27429743/
+    - https://www.bioinformatics.babraham.ac.uk/projects/SNPsplit/
+    - https://github.com/FelixKrueger/SNPsplit
+
+#................................................
+#  Allele-specific looping on targeted windows
+#................................................
+    
+- if flag merge; samtools cat -o out.merged.bam input.bam
+- if flag sort; samtools sort @${ncpus} -o out.sorted.bam input.bam
+- samtools index input.bam
+- find correct bin (1-based bins as in HiCDC+ bin to len files from HIPPO 060)
+
+chr1=17; startr1=30890001; bin=5000; startw1=$(( (startr1-1)/bin*bin + 1 )); endw1=$(( startw1 + bin - 1 )); coordw1=`echo "${chr1}:${startw1}-${endw1}"`
+chr2=17; startr2=32205001; bin=5000; startw2=$(( (startr2-1)/bin*bin + 1 )); endw2=$(( startw2 + bin - 1 )); coordw2=`echo "${chr2}:${startw2}-${endw2}"`
+
+- samtools view -b -h input.sorted.bam ${coordw1} ${coordw2} > out.asl.bam
+- samtools index out.asl.bam
+- samtools mpileup -f GenomeGRCh38p7.fa -r 17:30894259-30894259 out.asl.bam
+- need to then count ocurrences
+- R bonomial test/ see plots below
