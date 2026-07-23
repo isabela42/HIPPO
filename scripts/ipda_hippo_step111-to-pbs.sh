@@ -5,7 +5,7 @@ usage(){
 echo "
 Written by Isabela Almeida
 Created on Jul 22, 2026
-Last modified on Jul 22, 2026
+Last modified on Jul 24, 2026
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 111 of HIPPO
@@ -13,7 +13,7 @@ Description: Write and submit PBS jobs for step 111 of HIPPO
 
 Usage: bash ipda_hippo_step111-to-pbs.sh -i "path/to/input/files" -p "PBS stem" -e "email" -m INT -c INT -w "HH:MM:SS"
 
-Resources used for pipeline in-house: -m 1 -c 1 -w "01:00:00"
+Resources used for pipeline in-house: -m 5 -c 4 -w "05:00:00"
 
 ## Input:
 
@@ -299,7 +299,7 @@ cut -f1 ${input} | sort | uniq | while read stem; do echo "samtools index -@${nc
 cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 
 cut -f1 ${input} | sort | uniq | while read stem; do echo 'echo "## Find correct bins at" ; date ; echo' >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do grep "${stem}" ${input} | cut -f9 | sort | uniq | while read window; do bin=`grep "${stem}" ${input} | cut -f4 | sort | uniq`; chr1=`grep -E "${stem}.*${window}" ${input} | cut -f5 | sort | uniq`; start1=`grep -E "${stem}.*${window}" ${input} | cut -f6 | sort | uniq`; chr2=`grep -E "${stem}.*${window}" ${input} | cut -f7 | sort | uniq`; start2=`grep -E "${stem}.*${window}" ${input} | cut -f8 | sort | uniq`; echo "chr1=${chr1}; startr1=${start1}; bin=${bin}; startw1=\$(( (startr1-1)/bin*bin + 1 )); endw1=\$(( startw1 + bin - 1 )); ${window}_coordw1=\`echo "\${chr1}:\${startw1}-\${endw1}"\`\tchr2=${chr2}; startr2=${start2}; bin=${bin}; startw2=\$(( (startr2-1)/bin*bin + 1 )); endw2=\$(( startw2 + bin - 1 )); ${window}_coordw2=\`echo "\${chr2}:\${startw2}-\${endw2}"\`" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done; done
+cut -f1 ${input} | sort | uniq | while read stem; do grep "${stem}" ${input} | cut -f9 | sort | uniq | while read window; do bin=`grep "${stem}" ${input} | cut -f4 | sort | uniq`; chr1=`grep -E "${stem}.*${window}" ${input} | cut -f5 | sort | uniq`; start1=`grep -E "${stem}.*${window}" ${input} | cut -f6 | sort | uniq`; chr2=`grep -E "${stem}.*${window}" ${input} | cut -f7 | sort | uniq`; start2=`grep -E "${stem}.*${window}" ${input} | cut -f8 | sort | uniq`; echo "chr1=${chr1}; startr1=${start1}; bin=${bin}; startw1=\$(( (startr1-1)/bin*bin + 1 )); endw1=\$(( startw1 + bin - 1 )); ${window}_coordw1=\`echo "\${chr1}:\${startw1}-\${endw1}"\`; qchr2=${chr2}; startr2=${start2}; bin=${bin}; startw2=\$(( (startr2-1)/bin*bin + 1 )); endw2=\$(( startw2 + bin - 1 )); ${window}_coordw2=\`echo "\${chr2}:\${startw2}-\${endw2}"\`" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 
 cut -f1 ${input} | sort | uniq | while read stem; do echo 'echo "## Filter BAM file to window coordinates of interest at" ; date ; echo' >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
