@@ -17,8 +17,8 @@ Usage: Rscript ipda_hippo_step112.r [options]
 
 Options:
   --inputc FILE          Compilation of all sample TSV files from hippo111_asl_SamTools_DATE with header
-                         e.g. grep "sample" hippo111_asl_SamTools_DATE/*.counts.tsv > counts.tsv;
-                         grep -v "sample" hippo111_asl_SamTools_DATE/*.counts.tsv >> counts.tsv
+                         e.g. grep 'sample' hippo111_asl_SamTools_DATE/*.counts.tsv > counts.tsv;
+                         grep -v 'sample' hippo111_asl_SamTools_DATE/*.counts.tsv >> counts.tsv
   --outdir DIR           Output directory
   --outstem STEM         Output file stem
   --help                 Show this help message
