@@ -104,27 +104,15 @@ Contributions are what make the open source community such an amazing place to b
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-
-<!-- ACKNOWLEDGEMENTS
-## Acknowledgements
-
-* []()
-* []()
-* []() -->
-
-
-<!-- CONTACT -->
-## Contact
-
-Isabela Almeida - mb.isabela42@gmail.com
-
-Project Link: [https://github.com/isabela42/HIPPO](https://github.com/isabela42/HIPPO)
-
 <!-- LICENSE -->
 ## License
 
 Distributed under the MIT License. See [LICENSE][license-url] for more information.
 
+<!-- CONTACT -->
+## Contact
+
+Please contact [Isabela Almeida](mb.isabela42@gmail.com) if you have any enquires.
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
@@ -137,6 +125,6 @@ Distributed under the MIT License. See [LICENSE][license-url] for more informati
 [issues-shield]: https://img.shields.io/github/issues/isabela42/HIPPO.svg?style=for-the-badge
 [issues-url]: https://github.com/isabela42/HIPPO/issues
 [license-shield]: https://img.shields.io/github/license/isabela42/HIPPO.svg?style=for-the-badge
-[license-url]: https://github.com/isabela42/HIPPO/blob/master/LICENSE
+[license-url]: https://github.com/isabela42/HIPPO/blob/main/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/isabela42/
