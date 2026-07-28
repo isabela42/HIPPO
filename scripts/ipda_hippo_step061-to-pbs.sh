@@ -6,7 +6,7 @@ echo "
 Written by Isabela Almeida
 Based on Jonathan Beesley R script
 Created on Jul 04, 2024
-Last modified on September 16, 2025
+Last modified on Jul 28, 2026
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 061 of HIPPO
@@ -72,7 +72,7 @@ Pipeline description:
 #   080 5kb range interaction calls (1HiCDC+)
 #   090 Create UCSC browser tracks (1 txt.gz, 2 pgl)
 #   100 Intersect calls with BED coordinates (1pgltools)
-
+#   110 Targeted allele-specific looping (1SamTools, 2R plots)
 
 Please contact Isabela Almeida at mb.isabela42@gmail.com if you encounter any problems.
 "

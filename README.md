@@ -26,9 +26,11 @@
     <li>
       <a href="#overview">Overview</a>
     </li>
-    <li>
-      <a href="#pipeline-prerequisites">Pipeline prerequisites</a>
-    </li>
+    <li><a href="#pipeline-requirements">Pipeline requirements</a></li>
+    <ul>
+        <li><a href="#tools">Tools</a></li>
+        <li><a href="#input-files">Input files</a></li>
+      </ul>
     <li><a href="#usage">Usage</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#contact">Contact</a></li>
@@ -39,7 +41,7 @@
 <!-- ABOUT THE PROJECT -->
 ## Overview
 
-This repository contains the scripts used in our in-house RNAseq analysis pipeline that runs on a PBS cluster.
+This repository contains the scripts used in our in-house HiChIP data processing pipeline that runs on a PBS cluster - HIPPO (HiChIP Integration Pipeline for PBS Operations).
 
 Each script file foccus on one part of the analysis, from file preparation and quality assessment to creating BED coordinate files for UCSC Browser visualisation and coordinate intersection.
 
@@ -55,9 +57,32 @@ Each script file foccus on one part of the analysis, from file preparation and q
 * 100 Intersect calls with BED coordinates (1pgltools)
 
 <!-- GETTING STARTED -->
-## Pipeline Prerequisites
+## Pipeline requirements
 
 To get a local copy up and running, make sure you have each script file prerequisites instaled and up to date.
+
+HIPPO is available in a series of BASH scripts that can be run on a PBS. Users running HIPPO on a HPC using a different system can still use HIPPO, but will need to extract main command lines from the scripts (Write PBS command lines on each script). To run HIPPO you should clone the repo 
+  
+   ```sh
+   git clone https://github.com/isabela42/HIPPO.git
+   ```
+
+### Tools
+
+- Python v2.7.13
+- R v4.2.0
+- R v4.5.0
+- Pandoc v3.1.1
+- Bowtie2 v2.2.9
+- HiC-Pro v2.11.4
+- HiC-DC+ v 1.6.0
+- SamTools v1.9
+- SamTools v1.17
+- pgltools v20180905
+
+### Input files
+
+In addition to HiChIP data, users will also need a reference genome FASTA file and if filtering significant chromatin interactions against a set of coordinates, users will need to provide a BED file with those.
 
 <!-- USAGE EXAMPLES -->
 ## Usage
