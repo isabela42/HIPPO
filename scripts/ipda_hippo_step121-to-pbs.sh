@@ -4,16 +4,16 @@ version="1.0.0"
 usage(){
 echo "
 Written by Isabela Almeida
-Created on Jul 22, 2026
+Created on Aug 11, 2026
 Last modified on Aug 11, 2026
 Version: ${version}
 
-Description: Write and submit PBS jobs for step 111 of HIPPO
+Description: Write and submit PBS jobs for step 121 of HIPPO
 (HiChIP Integration Pipeline for PBS Operations).
 
-Usage: bash ipda_hippo_step111-to-pbs.sh -i "path/to/input/files" -p "PBS stem" -e "email" -m INT -c INT -w "HH:MM:SS"
+Usage: bash ipda_hippo_step121-to-pbs.sh -i "path/to/input/files" -p "PBS stem" -e "email" -m INT -c INT -w "HH:MM:SS"
 
-Resources used for pipeline in-house: -m 5 -c 4 -w "05:00:00"
+Resources used for pipeline in-house: -m 20 -c 1 -w "01:00:00"
 
 ## Input:
 
@@ -21,60 +21,17 @@ Resources used for pipeline in-house: -m 5 -c 4 -w "05:00:00"
                             directory. This TSV file should contain:
                             
                             Col1:
-                            sample-stem
+                            stem
 
                             Col2:
                             /path/from/working/dir/to/bowtie_results/bwt2/data/input.bwt2pairs.bam
-                            Note: from HIPPO 050 step if multiple input.bam files, then space separate these,
-                            e.g. /path/from/working/dir/to/input1.bam /path/from/working/dir/to/input2.bam
-                            and flag merge yes on col3
 
                             Col3:
-                            yes|no
-                            yes to merge the different BAM files, where Col1 remains the same but different files are space separated
-                            no to proceed without merging - single file provided.
-
-                            Col4:
-                            INT
-                            1-based bins where interactions are dispersed. 
-                            This is the bin size used for the interaction calls in step 060 of HIPPO.
-
-                            Col5:
-                            INT
-                            chromosome of lower interaction window,
-                            e.g. 17 for window 17:30890001-30895000
-
-                            Col6:
-                            INT
-                            start coordinate of lower interaction window,
-                            eg. 30890001 for window 17:30890001-30895000
-
-                            Col7:
-                            INT
-                            chromosome of upper interaction window,
-                            e.g. 17 for window 17:32205001-32210000
-
-                            Col8:
-                            INT
-                            start coordinate of upper interaction window,
-                            eg. 32205001 for window 17:32205001-32210000
-
-                            Col9:
-                            stem-window-of-interest
-                            For each window of interest, provide a window stem,
-                            e.g. rs62070652 if looking for that SNP
-
-                            Col10:
-                            SNP-coordinates
-                            Note: structure as 17:30894259-30894259
-
-                            Col11:
-                            /path/from/working/dir/to/reference.genome.fasta
+                            effective-genome-size-INT
+                            Note: for reference use https://deeptools.readthedocs.io/en/latest/content/feature/effectiveGenomeSize.html
 
                             It does not matter if same stem 
-                            appears more than once on this input file,
-                            as long as it is associated with only one counts.tsv file.
-                            Use stem to combine different samples (in counts.tsv) in the same plot.
+                            appears more than once on this input file.
 
 -p <PBS stem>               Stem for PBS file names
 -e <email>                  Email for PBS job
@@ -99,8 +56,8 @@ Pipeline description:
 #   080 5kb range interaction calls (1HiCDC+)
 #   090 Create UCSC browser tracks (1 txt.gz, 2 pgl)
 #   100 Intersect calls with BED coordinates (1pgltools)
-#-->110 Targeted allele-specific looping (1SamTools, 2R plots)
-#   120 Extract ChIP signals from HiChIP data (1deepTools)
+#   110 Targeted allele-specific looping (1SamTools, 2R plots)
+#-->120 Extract ChIP signals from HiChIP data (1deepTools)
 
 Please contact Isabela Almeida at mb.isabela42@gmail.com if you encounter any problems.
 "
@@ -144,7 +101,7 @@ do
         w) walltime="${OPTARG}";;    # Clock walltime required for PBS job
         h) Help ; exit;;             # Print Help and exit
         v) echo "${version}"; exit;; # Print version and exit
-        ?) echo script usage: bash ipda_hippo_step111-to-pbs.sh -i path/to/input/files -p PBS stem -e email -m INT -c INT -w "HH:MM:SS" >&2
+        ?) echo script usage: bash ipda_hippo_step121-to-pbs.sh -i path/to/input/files -p PBS stem -e email -m INT -c INT -w "HH:MM:SS" >&2
            exit;;
     esac
 done
@@ -159,31 +116,31 @@ done
 # and memory/CPU usage for all executions
 thislogdate=$(date +'%d%m%Y%H%M%S%Z')
 human_thislogdate=`date`
-logfile=logfile_ipda_hippo_step111-to-pbs_${thislogdate}.txt
+logfile=logfile_ipda_hippo_step121-to-pbs_${thislogdate}.txt
 
 #................................................
 #  Set and create output path
 #................................................
 
 ## Set stem for output directories
-outpath_hippo111_samtools="hippo111_asl_SamTools_${thislogdate}"
+outpath_hippo121_deeptools="hippo121_chip-signals_deepTools_${thislogdate}"
 
 ## Create output directories
-mkdir -p ${outpath_hippo111_samtools}
+mkdir -p ${outpath_hippo121_deeptools}
 
 #................................................
 #  Required modules, softwares and libraries
 #................................................
 
-# SamTools 1.9
-module_Samtools="samtools/1.9"
+# deepTools 3.5.6
+module_deepTools="conda-envs/deeptools-3.5.6"
 
 #................................................
 #  Print Execution info to user
 #................................................
 
 date
-echo "## Executing bash ipda_hippo_step111-to-pbs.sh"
+echo "## Executing bash ipda_hippo_step121-to-pbs.sh"
 echo "## This execution PID: ${pid}"
 echo
 echo "## Given inputs:"
@@ -197,7 +154,7 @@ echo "## PBS job walltime required:   ${walltime}"
 echo
 echo "## Outputs created:"
 echo
-echo "## Output files saved to:       ${outpath_hippo111_samtools}"
+echo "## Output files saved to:       ${outpath_hippo121_deeptools}"
 echo "## logfile will be saved as:    ${logfile}"
 echo
 
@@ -215,7 +172,7 @@ echo
 exec &> "${logfile}"
 
 date
-echo "## Executing bash ipda_hippo_step111-to-pbs.sh"
+echo "## Executing bash ipda_hippo_step121-to-pbs.sh"
 echo "## This execution PID: ${pid}"
 echo
 echo "## Given inputs:"
@@ -229,7 +186,7 @@ echo "## PBS job walltime required:   ${walltime}"
 echo
 echo "## Outputs created:"
 echo
-echo "## Output files saved to:       ${outpath_hippo111_samtools}"
+echo "## Output files saved to:       ${outpath_hippo121_deeptools}"
 echo "## This is logfile:             ${logfile}"
 
 set -v
@@ -277,7 +234,7 @@ cut -f1 ${input} | sort | uniq | while read stem; do echo "#....................
 cut -f1 ${input} | sort | uniq | while read stem; do echo "#  Load Softwares, Libraries and Modules" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo "#................................................" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "module load ${module_Samtools}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do echo "module load ${module_deepTools}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 
 
@@ -286,46 +243,18 @@ cut -f1 ${input} | sort | uniq | while read stem; do echo "#....................
 cut -f1 ${input} | sort | uniq | while read stem; do echo "#  Run step" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo "#................................................" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo 'echo "## Merge input BAM files at" ; date ; echo' >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do flag_merge=`grep "${stem}" ${input} | cut -f3 | sort | uniq`; if [[ $flag_merge = "yes" ]]; then mergebam=`grep "${stem}" ${input} | cut -f2 | sort | uniq`; echo "samtools cat -o ${outpath_hippo111_samtools}/${stem}.merged.bam ${mergebam}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; elif [[ $flag_merge = "no" ]]; then echo "#Flag to do not merge file" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; else echo "Unknown flag provided. Please provide either yes or no and try again" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; fi; done
-cut -f1 ${input} | sort | uniq | while read stem; do flag_merge=`grep "${stem}" ${input} | cut -f3 | sort | uniq`; if [[ $flag_merge = "yes" ]]; then echo "inputbam=\"${outpath_hippo111_samtools}/${stem}.merged.bam\"" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; elif [[ $flag_merge = "no" ]]; then nonmergebam=`grep "${stem}" ${input} | cut -f2 | sort | uniq`; echo "inputbam=\"${nonmergebam}\"" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; else echo "Unknown flag provided. Please provide either yes or no and try again" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; fi; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-
-cut -f1 ${input} | sort | uniq | while read stem; do echo 'echo "## Sort input BAM files at" ; date ; echo' >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "samtools sort -@${ncpus} -o ${outpath_hippo111_samtools}/${stem}.sorted.bam \${inputbam}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-
-cut -f1 ${input} | sort | uniq | while read stem; do echo 'echo "## Index BAM file at" ; date ; echo' >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "samtools index -@${ncpus} ${outpath_hippo111_samtools}/${stem}.sorted.bam" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-
-cut -f1 ${input} | sort | uniq | while read stem; do echo 'echo "## Find correct bins at" ; date ; echo' >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do grep "${stem}" ${input} | cut -f9 | sort | uniq | while read window; do bin=`grep "${stem}" ${input} | cut -f4 | sort | uniq`; chr1=`grep -E "${stem}.*${window}" ${input} | cut -f5 | sort | uniq`; start1=`grep -E "${stem}.*${window}" ${input} | cut -f6 | sort | uniq`; chr2=`grep -E "${stem}.*${window}" ${input} | cut -f7 | sort | uniq`; start2=`grep -E "${stem}.*${window}" ${input} | cut -f8 | sort | uniq`; echo "chr1=${chr1}; startr1=${start1}; bin=${bin}; startw1=\$(( (startr1-1)/bin*bin + 1 )); endw1=\$(( startw1 + bin - 1 )); ${window}_coordw1=\`echo "\${chr1}:\${startw1}-\${endw1}"\`; chr2=${chr2}; startr2=${start2}; bin=${bin}; startw2=\$(( (startr2-1)/bin*bin + 1 )); endw2=\$(( startw2 + bin - 1 )); ${window}_coordw2=\`echo "\${chr2}:\${startw2}-\${endw2}"\`" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-
-cut -f1 ${input} | sort | uniq | while read stem; do echo 'echo "## Filter BAM file to window coordinates of interest at" ; date ; echo' >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do grep "${stem}" ${input} | cut -f9 | sort | uniq | while read window; do echo "samtools view -@${ncpus} -b -h ${outpath_hippo111_samtools}/${stem}.sorted.bam \${${window}_coordw1} \${${window}_coordw2} > ${outpath_hippo111_samtools}/${stem}.${window}.bam" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-
-cut -f1 ${input} | sort | uniq | while read stem; do echo 'echo "## Index window BAM files at" ; date ; echo' >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do grep "${stem}" ${input} | cut -f9 | sort | uniq | while read window; do echo "samtools index -@${ncpus} ${outpath_hippo111_samtools}/${stem}.${window}.bam" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-
-cut -f1 ${input} | sort | uniq | while read stem; do echo 'echo "## Count ref and alt allele occurrences at" ; date ; echo' >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do grep "${stem}" ${input} | cut -f9 | sort | uniq | while read window; do snp=`grep -E "${stem}.*${window}" ${input} | cut -f10 | sort | uniq`; ref=`grep "${stem}" ${input} | cut -f11 | sort | uniq`; echo "samtools mpileup -f ${ref} -r ${snp} -o ${outpath_hippo111_samtools}/${stem}.${window}.mpileup ${outpath_hippo111_samtools}/${stem}.${window}.bam" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-
-cut -f1 ${input} | sort | uniq | while read stem; do echo 'echo "## Write counts to file at" ; date ; echo' >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo -e "sample\tref\talt\ttotal" >> ${outpath_hippo111_samtools}/${stem}.counts; grep "${stem}" ${input} | cut -f9 | sort | uniq | while read window; do echo "ref=\`cut -f5 ${outpath_hippo111_samtools}/${stem}.${window}.mpileup | awk '{print gsub(/[.,]/, \"\")}'\`; alt=\`cut -f5 ${outpath_hippo111_samtools}/${stem}.${window}.mpileup | awk '{print gsub(/[ACGTNacgtn]/, \"\")}'\`; total=\$((ref + alt)); echo -e \"${stem}_${window}\t\${ref}\t\${alt}\t\${total}\" >> ${outpath_hippo111_samtools}/${stem}.counts" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done; done
+cut -f1 ${input} | sort | uniq | while read stem; do echo 'echo "## Extract ChIP signals from BAM at" ; date ; echo' >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do bam=`grep "${stem}" ${input} | cut -f2 | sort | uniq`; size=`grep "${stem}" ${input} | cut -f3 | sort | uniq`;echo "bamCovarage -p ${ncpus} -b ${bam} -o ${outpath_hippo121_deeptools}/${stem}.ChIP.bw --binSize 10 --normalizeUsing RPGC --effectiveGenomeSize ${size} --extendReads --ignoreDuplicates" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 
 #................................................
 #  Submit PBS jobs
 #................................................
 
 ## Submit PBS jobs 
-ls ${pbs_stem}_*${thislogdate}.pbs | while read pbs; do echo ; echo "#................................................" ; echo "# This is PBS: ${pbs}" ;  echo "#" ; echo "# now submitting PBS" ; echo "qsub ${pbs}" ; qsub ${pbs} ; echo "#................................................" ; done
+ls ${pbs_stem}_*${thislogdate}.pbs | while read pbs; do echo ; echo "#................................................" ; echo "# This is PBS: ${pbs}" ;  echo "#" ; echo "# main command line(s): $(tail -n1 ${pbs})"; echo "#" ; echo "# now submitting PBS" ; echo "qsub ${pbs}" ; qsub ${pbs} ; echo "#................................................" ; done
 
-date ## Status of all user jobs (including HIPPO step 111 jobs) at
+
+date ## Status of all user jobs (including HIPPO step 121 jobs) at
 qstat -u "$user"
 
 # This will remove $VARNAMES from output file with the actual $VARVALUE
@@ -339,8 +268,8 @@ sed -i 's,${walltime},'"${walltime}"',g' "$logfile"
 sed -i 's,${human_thislogdate},'"${human_thislogdate}"',g' "$logfile"
 sed -i 's,${thislogdate},'"${thislogdate}"',g' "$logfile"
 sed -i 's,${user},'"${user}"',g' "$logfile"
-sed -i 's,${module_Samtools},'"${module_Samtools}"',g' "$logfile"
-sed -i 's,${outpath_hippo111_samtools},'"${outpath_hippo111_samtools}"',g' "$logfile"
+sed -i 's,${module_deepTools},'"${module_deepTools}"',g' "$logfile"
+sed -i 's,${outpath_hippo121_deeptools},'"${outpath_hippo121_deeptools}"',g' "$logfile"
 sed -i 's,${logfile},'"${logfile}"',g' "$logfile"
 sed -n -e :a -e '1,3!{P;N;D;};N;ba' $logfile > tmp ; mv tmp $logfile
 set +v

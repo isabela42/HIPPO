@@ -5,7 +5,7 @@ usage(){
 echo "
 Written by Isabela Almeida
 Created on Jul 30, 2024
-Last modified on Jul 28, 2026
+Last modified on Aug 11, 2026
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 101 of HIPPO
@@ -62,6 +62,7 @@ Pipeline description:
 #   090 Create UCSC browser tracks (1 txt.gz, 2 pgl)
 #-->100 Intersect calls with BED coordinates (1pgltools)
 #   110 Targeted allele-specific looping (1SamTools, 2R plots)
+#   120 Extract ChIP signals from HiChIP data (1deepTools)
 
 Please contact Isabela Almeida at mb.isabela42@gmail.com if you encounter any problems.
 "
