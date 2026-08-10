@@ -254,7 +254,7 @@ cut -f1 ${input} | sort | uniq | while read stem; do flag_merge=`grep "${stem}" 
 cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 
 cut -f1 ${input} | sort | uniq | while read stem; do echo 'echo "## Extract ChIP signals from BAM at" ; date ; echo' >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do size=`grep "${stem}" ${input} | cut -f3 | sort | uniq`; echo "bamCovarage -p ${ncpus} -b \${inputbam} -o ${outpath_hippo121_deeptools}/${stem}.ChIP.bw --binSize 10 --normalizeUsing RPGC --effectiveGenomeSize ${size} --extendReads --ignoreDuplicates" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do size=`grep "${stem}" ${input} | cut -f3 | sort | uniq`; echo "bamCoverage -p ${ncpus} -b \${inputbam} -o ${outpath_hippo121_deeptools}/${stem}.ChIP.bw --binSize 10 --normalizeUsing RPGC --effectiveGenomeSize ${size} --extendReads --ignoreDuplicates" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 
 #................................................
 #  Submit PBS jobs
