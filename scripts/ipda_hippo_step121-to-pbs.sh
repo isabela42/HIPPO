@@ -253,15 +253,27 @@ cut -f1 ${input} | sort | uniq | while read stem; do flag_merge=`grep "${stem}" 
 cut -f1 ${input} | sort | uniq | while read stem; do flag_merge=`grep "${stem}" ${input} | cut -f4 | sort | uniq`; if [[ $flag_merge = "yes" ]]; then echo "inputbam=\"${outpath_hippo121_deeptools}/${stem}.merged.bam\"" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; elif [[ $flag_merge = "no" ]]; then nonmergebam=`grep "${stem}" ${input} | cut -f2 | sort | uniq`; echo "inputbam=\"${nonmergebam}\"" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; else echo "Unknown flag provided. Please provide either yes or no and try again" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; fi; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 
+cut -f1 ${input} | sort | uniq | while read stem; do echo 'echo "## Sort input BAM files at" ; date ; echo' >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do echo "samtools sort -@${ncpus} -o ${outpath_hippo121_deeptools}/${stem}.sorted.bam \${inputbam}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+
+cut -f1 ${input} | sort | uniq | while read stem; do echo 'echo "## Index BAM file at" ; date ; echo' >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do echo "samtools index -@${ncpus} ${outpath_hippo121_deeptools}/${stem}.sorted.bam" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+
 cut -f1 ${input} | sort | uniq | while read stem; do echo 'echo "## Extract ChIP signals from BAM at" ; date ; echo' >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read stem; do size=`grep "${stem}" ${input} | cut -f3 | sort | uniq`; echo "bamCoverage -p ${ncpus} -b \${inputbam} -o ${outpath_hippo121_deeptools}/${stem}.ChIP.bw --binSize 10 --normalizeUsing RPGC --effectiveGenomeSize ${size} --extendReads --ignoreDuplicates" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+
+cut -f1 ${input} | sort | uniq | while read stem; do echo 'echo "## Remove BAM files at" ; date ; echo' >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do echo "rm -f ${outpath_hippo121_deeptools}/${stem}.bam ${outpath_hippo121_deeptools}/${stem}.bam.bai" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 
 #................................................
 #  Submit PBS jobs
 #................................................
 
 ## Submit PBS jobs 
-ls ${pbs_stem}_*${thislogdate}.pbs | while read pbs; do echo ; echo "#................................................" ; echo "# This is PBS: ${pbs}" ;  echo "#" ; echo "# main command line(s): $(tail -n1 ${pbs})"; echo "#" ; echo "# now submitting PBS" ; echo "qsub ${pbs}" ; qsub ${pbs} ; echo "#................................................" ; done
+ls ${pbs_stem}_*${thislogdate}.pbs | while read pbs; do echo ; echo "#................................................" ; echo "# This is PBS: ${pbs}" ;  echo "#" ; echo "# main command line(s): $(tail -n4 ${pbs} | head -n1)"; echo "#" ; echo "# now submitting PBS" ; echo "qsub ${pbs}" ; qsub ${pbs} ; echo "#................................................" ; done
 
 
 date ## Status of all user jobs (including HIPPO step 121 jobs) at
