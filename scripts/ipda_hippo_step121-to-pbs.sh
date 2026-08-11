@@ -140,6 +140,9 @@ mkdir -p ${outpath_hippo121_deeptools}
 # deepTools 3.5.6
 module_deepTools="conda-envs/deeptools-3.5.6"
 
+# SamTools 1.9
+module_Samtools="samtools/1.9"
+
 #................................................
 #  Print Execution info to user
 #................................................
@@ -240,6 +243,7 @@ cut -f1 ${input} | sort | uniq | while read stem; do echo "#  Load Softwares, Li
 cut -f1 ${input} | sort | uniq | while read stem; do echo "#................................................" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo "module load ${module_deepTools}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do echo "module load ${module_Samtools}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 
 
@@ -291,6 +295,7 @@ sed -i 's,${human_thislogdate},'"${human_thislogdate}"',g' "$logfile"
 sed -i 's,${thislogdate},'"${thislogdate}"',g' "$logfile"
 sed -i 's,${user},'"${user}"',g' "$logfile"
 sed -i 's,${module_deepTools},'"${module_deepTools}"',g' "$logfile"
+sed -i 's,${module_Samtools},'"${module_Samtools}"',g' "$logfile"
 sed -i 's,${outpath_hippo121_deeptools},'"${outpath_hippo121_deeptools}"',g' "$logfile"
 sed -i 's,${logfile},'"${logfile}"',g' "$logfile"
 sed -n -e :a -e '1,3!{P;N;D;};N;ba' $logfile > tmp ; mv tmp $logfile
