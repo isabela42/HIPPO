@@ -266,7 +266,7 @@ cut -f1 ${input} | sort | uniq | while read stem; do echo "samtools index -@${nc
 cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 
 cut -f1 ${input} | sort | uniq | while read stem; do echo 'echo "## Extract ChIP signals from BAM at" ; date ; echo' >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do size=`grep "${stem}" ${input} | cut -f3 | sort | uniq`; echo "bamCoverage -p ${ncpus} -b ${outpath_hippo121_deeptools}/${stem}.sorted.bam -o ${outpath_hippo121_deeptools}/${stem}.ChIP.bw --binSize 10 --normalizeUsing RPGC --effectiveGenomeSize ${size} --extendReads --ignoreDuplicates" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do size=`grep "${stem}" ${input} | cut -f3 | sort | uniq`; echo "bamCoverage -p ${ncpus} -b ${outpath_hippo121_deeptools}/${stem}.sorted.bam -o ${outpath_hippo121_deeptools}/${stem}.ChIP.bw --binSize 10 --normalizeUsing RPGC --effectiveGenomeSize ${size} --ignoreDuplicates" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 
 cut -f1 ${input} | sort | uniq | while read stem; do echo 'echo "## Remove BAM files at" ; date ; echo' >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
