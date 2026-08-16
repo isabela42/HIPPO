@@ -5,7 +5,7 @@ usage(){
 echo "
 Written by Isabela Almeida
 Created on Aug 11, 2026
-Last modified on Aug 13, 2026
+Last modified on Aug 17, 2026
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 121 of HIPPO
@@ -137,8 +137,8 @@ mkdir -p ${outpath_hippo121_deeptools}
 #  Required modules, softwares and libraries
 #................................................
 
-# deepTools 3.5.6
-module_deepTools="conda-envs/deeptools-3.5.6"
+# deepTools 3.5.0
+module_deepTools="conda-envs/deeptools-3.5.0"
 
 # SamTools 1.9
 module_Samtools="samtools/1.9"
