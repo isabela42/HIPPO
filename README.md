@@ -55,6 +55,8 @@ Each script file foccus on one part of the analysis, from file preparation and q
 * 080 5kb range interaction calls (1HiCDC+)
 * 090 Create UCSC browser tracks (1 txt.gz, 2 pgl)
 * 100 Intersect calls with BED coordinates (1pgltools)
+* 110 Targeted allele-specific looping (1SamTools, 2R plots)
+* 120 Extract ChIP signals from HiChIP data (1deepTools)
 
 <!-- GETTING STARTED -->
 ## Pipeline requirements
@@ -112,7 +114,7 @@ Distributed under the MIT License. See [LICENSE][license-url] for more informati
 <!-- CONTACT -->
 ## Contact
 
-Please contact [Isabela Almeida](mb.isabela42@gmail.com) if you have any enquires.
+Please contact [Isabela Almeida](mailto:mb.isabela42@gmail.com) if you have any enquires.
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
